@@ -12,7 +12,7 @@ DEBUG = False
 # Render provides RENDER_EXTERNAL_HOSTNAME automatically
 RENDER_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1","localhost","mpgss.org"]
 if RENDER_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_HOSTNAME)
 
@@ -47,7 +47,7 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-SITE_ID = env.int("SITE_ID", default=1)
+SITE_ID =1
 
 # ALLAUTH
 ACCOUNT_LOGIN_METHODS = {"email", "username"}
@@ -60,7 +60,7 @@ ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/login/"
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
-SITE_URL = env("SITE_URL", default="http://127.0.0.1:8000")
+SITE_URL = "https://mpgss-ycle.onrender.com"
 
 # MIDDLEWARE
 MIDDLEWARE = [
@@ -118,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": env("REDIS_URL", default="redis://127.0.0.1:6379/1"),
+        "LOCATION": "redis://127.0.0.1:6379/1",
     }
 }
 
@@ -163,8 +163,8 @@ TWO_PDF_API_KEY = env("TWO_PDF_API_KEY", default="")
 TWO_PDF_API_URL = env("TWO_PDF_API_URL", default="https://api.2pdf.com/fill")
 
 # CELERY
-CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://127.0.0.1:6379/0")
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://127.0.0.1:6379/0")
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
