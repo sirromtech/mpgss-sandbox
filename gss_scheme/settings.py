@@ -192,9 +192,13 @@ if (BASE_DIR / "static").exists():
 
 STORAGES = {
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "core.storage.NonStrictManifestStaticFilesStorage",
+    },
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     },
 }
+
 
 # MEDIA
 MEDIA_URL = "/media/"
