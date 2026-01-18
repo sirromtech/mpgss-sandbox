@@ -34,7 +34,6 @@ import csv
 from django.http import HttpResponse
 from decimal import Decimal, ROUND_HALF_UP
 from .forms import ContinuingProfileForm, ContinuingApplicationForm 
-
 from .forms import LegacyLookupForm
 from django.views.decorators.http import require_http_methods
 from .models import LegacyStudent
@@ -379,7 +378,7 @@ def choose_application_type(request):
     return render(request, "applications/choose_application_type.html", {
         "profile": profile,
     })
-    
+
 @login_required
 def create_continuing_application(request):
     cfg = ApplicationConfig.get_solo()
@@ -394,7 +393,7 @@ def create_continuing_application(request):
     profile = ApplicantProfile.objects.get(id=profile_id)
 
     if request.method == 'POST':
-        form = ContinuingStudentApplicationForm(request.POST, request.FILES)
+        form = ContinuingApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             application = form.save(commit=False)
             application.applicant = profile
@@ -405,7 +404,7 @@ def create_continuing_application(request):
             messages.success(request, "Continuing student application submitted successfully.")
             return redirect('applications:application_success')
     else:
-        form = ContinuingStudentApplicationForm()
+        form = ContinuingApplicationForm()
 
     return render(request, 'applications/continuing_application_form.html', {
         'form': form,
@@ -1113,7 +1112,7 @@ def continue_application(request, pk):
     if cfg.rollover_due():
         ApplicationFormClass = ContinuingTranscriptOnlyForm
     else:
-        ApplicationFormClass = ContinuingStudentApplicationForm
+        ApplicationFormClass = ContinuingApplicationForm
 
     if request.method == "POST":
         profile_form = ContinuingProfileForm(request.POST, request.FILES, instance=profile)
