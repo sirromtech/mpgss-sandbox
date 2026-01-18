@@ -72,8 +72,6 @@ AWS_S3_ENDPOINT_URL = f"https://https://0f71abb008d0d253aaca4b2507969384.r2.clou
 # Bucket name
 AWS_STORAGE_BUCKET_NAME = "mpgss-docs"
 
-# Media settings
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 # Optional: make uploaded files public
 AWS_DEFAULT_ACL = None
