@@ -19,6 +19,7 @@ if RENDER_HOSTNAME:
 # APPLICATIONS
 INSTALLED_APPS = [
     "jazzmin",
+    "storages",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,6 +47,30 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 )
+
+
+# Cloudflare R2 credentials (store securely in environment variables!)
+AWS_ACCESS_KEY_ID = "f0a97eed388f189a31045f485e7cef9d"
+AWS_SECRET_ACCESS_KEY = "R8240559df5b6f847bbee214393b782583b7b84a229577b421b59b4a1573de7b1"
+
+# Your Cloudflare account ID (from R2 dashboard)
+CLOUDFLARE_ACCOUNT_ID = "0f71abb008d0d253aaca4b2507969384"
+
+# R2 endpoint (S3-compatible)
+AWS_S3_ENDPOINT_URL = f"https://https://0f71abb008d0d253aaca4b2507969384.r2.cloudflarestorage.com"
+
+# Bucket name
+AWS_STORAGE_BUCKET_NAME = "mpgss-docs"
+
+# Media settings
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+# Optional: make uploaded files public
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+
+MEDIA_URL = f"https://0f71abb008d0d253aaca4b2507969384.r2.cloudflarestorage.com/mpgss-docs/"
+
 
 SITE_ID =1
 

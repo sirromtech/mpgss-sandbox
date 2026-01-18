@@ -20,7 +20,7 @@ urlpatterns = [
     path("signup/", views.signup_view, name="signup"),
     path("logout/", views.logout_view, name="logout"),
     path("secure-media/<path:key>", secure_document, name="secure_document"),
-    path("documents/<path:key>/", view_document, name="view_document")
+    path("documents/<path:key>/", view_document, name="view_document"),
 
 
     # ------------------------------------------------------------------
