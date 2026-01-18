@@ -1,7 +1,7 @@
 # applications/urls.py
 from django.urls import path
 from django.contrib.auth import views as auth_views
-
+from .views_media import secure_document
 from . import views, views_review
 
 app_name = "applications"
@@ -19,6 +19,9 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("signup/", views.signup_view, name="signup"),
     path("logout/", views.logout_view, name="logout"),
+    path("secure-media/<path:key>", secure_document, name="secure_document"),
+    path("documents/<path:key>/", view_document, name="view_document")
+
 
     # ------------------------------------------------------------------
     # Student Applications
