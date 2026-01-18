@@ -3,6 +3,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from .views_media import secure_document, view_document
 from . import views, views_review
+from .views_health import health
 
 app_name = "applications"
 
@@ -12,7 +13,7 @@ urlpatterns = [
     # Public / Home
     # ------------------------------------------------------------------
     path("", views.home_view, name="home"),
-
+    path("health/", health, name="health"),
     # ------------------------------------------------------------------
     # Authentication
     # ------------------------------------------------------------------
