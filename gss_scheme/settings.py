@@ -28,7 +28,7 @@ if RENDER_HOSTNAME:
 
 # APPLICATIONS
 INSTALLED_APPS = [
-    "jazzmin",
+   # "jazzmin",
     "storages",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -225,3 +225,81 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_ENABLE_UTC = True
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Gerson Solulu Scholarship Admin",
+    "site_header": "GSSS Administration",
+    "site_brand": "GSSS",
+    "welcome_sign": "Welcome to the Gerson Solulu Scholarship Dashboard",
+    "copyright": "2025 Gerson Solulu Scholarship Scheme",
+
+    "site_icon": "img/logo.png",
+
+    # Global search across key models
+    "search_model": [
+        "applications.ApplicantProfile",
+        "applications.Application",
+        "applications.ApplicationReview",
+        "applications.News",
+    ],
+
+    # Top menu links
+    "topmenu_links": [
+        {"name": "Home", "url": "applications:home", "permissions": ["auth.view_user"]},
+        {"name": "Apply", "url": "applications:apply"},
+        {"name": "About", "url": "applications:about"},
+    ],
+
+    # User menu links
+    "usermenu_links": [
+        {"name": "Profile", "url": "admin:auth_user_change", "permissions": ["auth.change_user"]},
+    ],
+
+    "show_sidebar": True,
+    "navigation_expanded": True,
+
+    # Icons for apps and models
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "applications.ApplicantProfile": "fas fa-id-card",
+        "applications.Application": "fas fa-file-signature",
+        "applications.ApplicationReview": "fas fa-clipboard-check",
+        "applications.News": "fas fa-newspaper",
+        "applications.FAQ": "fas fa-question-circle",
+        "applications.PolicyPage": "fas fa-balance-scale",
+             # Authentication & Authorization
+        "auth.User": "fas fa-user",              # 👤 individual user
+        "auth.Group": "fas fa-users",            # 👥 groups of users
+
+        # Finance app
+        "finance.Payment": "fas fa-money-check-alt",  # 💳 payments
+
+        # Institutions app
+        "institutions.Course": "fas fa-book-open",    # 📖 courses
+        "institutions.Institution": "fas fa-university",  # 🎓 institution name
+
+        # Social accounts
+        "socialaccount.SocialAccount": "fas fa-share-alt",       # 🔗 linked social accounts
+        "socialaccount.SocialApp": "fas fa-plug",                # 🔌 social applications
+        "socialaccount.SocialToken": "fas fa-key",
+    },
+
+    # Theme and customization
+    "theme": "default",
+    "custom_css": "css/gss_admin.css",
+    "custom_js": "js/gss_admin.js",
+    "show_ui_builder": True,
+}
+
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar": "navbar-dark bg-primary",
+    "sidebar": "sidebar-dark-primary",
+    "theme": "cosmo",
+    "dark_mode_theme": "darkly",
+    "button_classes": {
+        "primary": "btn btn-primary",
+        "secondary": "btn btn-secondary",
+    },
+}
