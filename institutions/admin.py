@@ -27,15 +27,16 @@ class CourseAdmin(admin.ModelAdmin):
     ordering = ("institution", "code")
 
     def formatted_fee(self, obj):
+        raw = obj.total_tuition_fee
+
         try:
-            fee = obj.total_tuition_fee
-            if fee is None:
-                fee = Decimal("0")
-            fee = Decimal(str(fee))  # handles Decimal/float/str/SafeString safely
-        except (InvalidOperation, TypeError, ValueError):
+        # Convert anything (Decimal/float/str/SafeString) -> Decimal
+            fee = Decimal(str(raw).replace(",", "").strip())
+        except (InvalidOperation, TypeError, ValueError, AttributeError):
             fee = Decimal("0")
 
-        return format_html("PGK {:,.2f}", fee)
+        fee_text = f"{fee:,.2f}"
+        return format_html("PGK {}", fee_text)
 
     formatted_fee.short_description = "Tuition Fee"
     formatted_fee.admin_order_field = "total_tuition_fee"
