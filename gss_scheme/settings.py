@@ -10,11 +10,21 @@ SECRET_KEY = 'a14fcabb-36a9-4bb1-bf3c-e7d78f2dfc21'
 DEBUG = False
 
 # Render provides RENDER_EXTERNAL_HOSTNAME automatically
+
+
 RENDER_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 
-ALLOWED_HOSTS = ["127.0.0.1","localhost","mpgss.org"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "mpgss-ycle.onrender.com",
+    "mpgss.org",
+    "www.mpgss.org",
+]
+
 if RENDER_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_HOSTNAME)
+
 
 # APPLICATIONS
 INSTALLED_APPS = [
