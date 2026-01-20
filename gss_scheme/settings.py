@@ -9,6 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))  # optional for local dev
 
+
 # SECURITY
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
@@ -153,8 +154,27 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # CELERY
-CELERY_BROKER_URL = env("REDIS_URL", default="redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = env("REDIS_URL", default="redis://localhost:6379/0")
+
+
+# --- Redis base (must be set in Render) ---
+# Example: rediss://mpgss-redis-xxx.serverless.use1.cache.amazonaws.com:6379
+REDIS_URL = env("REDIS_URL", default="redis://localhost:6379")
+
+# Ensure it includes a DB; if user stored without /0, add it
+if REDIS_URL and REDIS_URL.count("/") < 3:  # crude but works for redis URLs
+    BROKER_URL = f"{REDIS_URL}/0"
+    RESULT_URL = f"{REDIS_URL}/1"
+else:
+    # If REDIS_URL already includes /0, derive /1 for result backend
+    if REDIS_URL.endswith("/0"):
+        BROKER_URL = REDIS_URL
+        RESULT_URL = REDIS_URL[:-2] + "/1"
+    else:
+        BROKER_URL = REDIS_URL
+        RESULT_URL = REDIS_URL
+
+CELERY_BROKER_URL = env("CELERY_BROKER_URL", default=env("REDIS_URL", default="redis://localhost:6379/0"))
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default=env("REDIS_URL", default="redis://localhost:6379/1"))
 
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
@@ -162,11 +182,32 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = env("TIME_ZONE", default="Pacific/Port_Moresby")
 CELERY_ENABLE_UTC = True
 
-# REDIS CACHE
+# --- TLS support for rediss:// (ElastiCache Serverless commonly needs this) ---
+if CELERY_BROKER_URL.startswith("rediss://"):
+    CELERY_BROKER_USE_SSL = {"ssl_cert_reqs": ssl.CERT_NONE
+}
+
+if str(CELERY_RESULT_BACKEND).startswith("rediss://"):
+    CELERY_REDIS_BACKEND_USE_SSL = {"ssl_cert_reqs": ssl.CERT_NONE
+}
+
+# --- Django cache (use DB 2 so it doesn't clash with celery) ---
+CACHE_URL = env("CACHE_URL", default=None)
+if not CACHE_URL:
+    # derive DB 2 from REDIS_URL if possible
+    if REDIS_URL.endswith("/0"):
+        CACHE_URL = REDIS_URL[:-2] + "/2"
+    elif REDIS_URL.endswith("/1"):
+        CACHE_URL = REDIS_URL[:-2] + "/2"
+    elif REDIS_URL.count("/") < 3:
+        CACHE_URL = f"{REDIS_URL}/2"
+    else:
+        CACHE_URL = REDIS_URL
+
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": env("REDIS_URL", default="redis://localhost:6379/1"),
+        "LOCATION": CACHE_URL,
     }
 }
 
