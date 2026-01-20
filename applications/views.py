@@ -329,7 +329,7 @@ def create_application(request):
             application.applicant = profile
             application.is_continuing = False
             application.save()
-            send_documents_confirmation_email(application)
+            
 
 
             task_id = str(uuid.uuid4())
@@ -459,7 +459,7 @@ def create_continuing_application(request):
             application.applicant = profile
             application.is_continuing = True
             application.save()
-            send_documents_confirmation_email(application)
+            
 
             messages.success(request, "Continuing student application submitted successfully.")
             return redirect('applications:application_success')
@@ -761,7 +761,7 @@ def review_application(request, pk):
         application.reviewer_note = note
         application.save()
         
-        send_documents_confirmation_email(application)
+        
 
         messages.success(request, "Application updated successfully.")
         return redirect('applications:officer_dashboard')
