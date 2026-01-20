@@ -586,7 +586,7 @@ def export_applications_csv(request):
     Accepts GET filters: q (search), status, institution_id (optional).
     """
     q = request.GET.get('q', '').strip()
-   status = (request.GET.get("status") or "").strip().upper()
+    status = (request.GET.get("status") or "").strip().upper()
 
 # Force status selection so it won't export everything by accident
     if not status:
