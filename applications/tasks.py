@@ -9,6 +9,7 @@ User = get_user_model()
 @shared_task(bind=True, max_retries=3)
 def send_application_status_email(self, review_id):
     from .models import ApplicationReview
+    from .utils import trigger_swiftmassive_event
     try:
         review = ApplicationReview.objects.select_related("application__applicant__user").get(pk=review_id)
         user = review.application.applicant.user
