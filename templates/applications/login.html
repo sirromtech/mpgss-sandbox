@@ -16,10 +16,24 @@
             .card {
                 margin: 0 1rem; /* add side spacing */
             }
-            img.logo {
-                max-width: 200px; /* shrink logo on small screens */
-            }
         }
+        /* Extra mobile tweaks */
+        .logo {
+          max-width: 250px; /* default size for desktops */
+         }
+
+        @media (max-width: 992px) {
+       .logo {
+        max-width: 200px; /* tablets */
+         }
+    }
+
+        @media (max-width: 576px) {
+       .logo {
+        max-width: 150px; /* phones */
+         }
+    }
+
     </style>
 
     {% block extra_head %}{% endblock %}
