@@ -157,28 +157,35 @@ def signup_view(request):
         form = SignupForm()
     return render(request, 'applications/signup.html', {'crispy_form': form})
 
-
-def send_swiftmissive_event(email, first_name, verification_link, unsubscribe_link):
+def send_swiftmissive_event(event_name, email, variables=None):
+    """
+    Trigger a SwiftMissive event with optional variables.
+    """
     url = "https://ghz0jve3kj.execute-api.us-east-1.amazonaws.com/events"
-    payload = {
-        "events": [
-            {
-                "name": "Welcome_email",   # 👈 matches your campaign event name
-                "email": email,
-                "user.first_name": first_name,
-                "verification_link": verification_link,
-                "unsubscribe_link": unsubscribe_link
-            }
-        ]
+
+    event = {
+        "name": event_name,
+        "email": email,
     }
+    if variables:
+        event.update(variables)
+
+    payload = {"events": [event]}
     headers = {
         "x-api-key": settings.SWIFTMISSIVE_API_KEY,
         "Content-Type": "application/json"
     }
-    response = requests.post(url, json=payload, headers=headers)
-    print("SwiftMissive response:", response.status_code, response.text)
-    return response.status_code, response.text
 
+    response = requests.post(url, json=payload, headers=headers)
+
+    # Debug logging
+    print("=== SwiftMissive Debug ===")
+    print("Payload:", payload)
+    print("Response Code:", response.status_code)
+    print("Response Body:", response.text)
+    print("==========================")
+
+    return response.status_code, response.text
 
 
 def verify_email(request, uidb64, token):
@@ -204,62 +211,16 @@ def verify_email(request, uidb64, token):
 
         # Trigger SwiftMissive event for verification
         send_swiftmissive_event(
-            event_name="email_verified",   # 👈 matches your SwiftMissive template event
-            email=user.email,
-            variables={
-                "user.first_name": user.first_name
-            }
+            "email_verified",
+            user.email,
+            {"user.first_name": user.first_name}
         )
 
         messages.success(request, f'Email verified! Welcome, {user.username}.')
-        return redirect('apply')  # 👈 goes to your application dashboard
+        return redirect('apply')
     else:
         messages.error(request, 'Verification link is invalid or expired.')
         return redirect('applications:login')
-
-def register_view(request):
-    """
-    Handles user registration:
-    - Creates inactive user
-    - Generates email verification link
-    - Sends SwiftMissive event with template variables
-    - Redirects to login until verified
-    """
-    if request.user.is_authenticated:
-        return redirect('apply')
-
-    if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False  # Require email verification
-            user.save()
-
-            # Generate verification link
-            token = default_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            verification_link = request.build_absolute_uri(
-                reverse('verify_email', kwargs={'uidb64': uid, 'token': token})
-            )
-
-            # Trigger SwiftMissive event with variables for template
-            send_swiftmissive_event(
-                event_name="Welcome_email",   # 👈 matches your SwiftMissive template event
-                email=user.email,
-                variables={
-                    "user.first_name": user.first_name,
-                    "verification_link": verification_link
-                }
-            )
-
-            messages.success(request, 'Registration successful! Please check your email to verify your account.')
-            return redirect('applications:login')
-        else:
-            messages.error(request, 'Registration failed. Please correct the errors below.')
-    else:
-        form = UserRegistrationForm()
-
-    return render(request, 'applications/signup.html', {'form': form})
 
 
 def register(request):
