@@ -600,8 +600,8 @@ def export_applications_csv(request):
 
     qs = qs.filter(status=status)
 
-        if institution_id:
-            qs = qs.filter(institution_id=institution_id)
+    if institution_id:
+        qs = qs.filter(institution_id=institution_id)
 
     # Group by institution in Python to write subtotals in order
     # Build a mapping: institution -> list of applications
