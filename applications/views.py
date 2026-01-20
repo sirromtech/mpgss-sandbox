@@ -44,6 +44,10 @@ from django.views.generic.edit import UpdateView
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.db import transaction
 from .models import ApplicationConfig
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+import requests
 
 
 logger = logging.getLogger(__name__)
@@ -153,25 +157,109 @@ def signup_view(request):
         form = SignupForm()
     return render(request, 'applications/signup.html', {'crispy_form': form})
 
+
+def send_swiftmissive_event(event_name, email, variables=None):
+    """
+    Trigger a SwiftMissive event with optional variables.
+    """
+    url = "https://ghz0jve3kj.execute-api.us-east-1.amazonaws.com/events"
+    event = {
+        "name": event_name,
+        "email": email,
+    }
+    if variables:
+        event.update(variables)
+
+    payload = {"events": [event]}
+    headers = {
+        "x-api-key": settings.SWIFTMISSIVE_API_KEY,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+    return response.status_code, response.text
+
+
+def verify_email(request, uidb64, token):
+    """
+    Handles email verification:
+    - Decodes user ID
+    - Validates token
+    - Activates user and logs them in
+    - Sends SwiftMissive 'email_verified' event
+    - Redirects to apply page
+    """
+    User = get_user_model()
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+
+        # Trigger SwiftMissive event for verification
+        send_swiftmissive_event(
+            event_name="email_verified",   # 👈 matches your SwiftMissive template event
+            email=user.email,
+            variables={
+                "user.first_name": user.first_name
+            }
+        )
+
+        messages.success(request, f'Email verified! Welcome, {user.username}.')
+        return redirect('apply')  # 👈 goes to your application dashboard
+    else:
+        messages.error(request, 'Verification link is invalid or expired.')
+        return redirect('applications:login')
+
 def register_view(request):
-    from .forms import UserRegistrationForm
+    """
+    Handles user registration:
+    - Creates inactive user
+    - Generates email verification link
+    - Sends SwiftMissive event with template variables
+    - Redirects to login until verified
+    """
     if request.user.is_authenticated:
-        return redirect('create_application')
+        return redirect('apply')
+
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, f'Registration successful! Welcome, {user.username}.')
-            return redirect('create_application')
+            user = form.save(commit=False)
+            user.is_active = False  # Require email verification
+            user.save()
+
+            # Generate verification link
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            verification_link = request.build_absolute_uri(
+                reverse('verify_email', kwargs={'uidb64': uid, 'token': token})
+            )
+
+            # Trigger SwiftMissive event with variables for template
+            send_swiftmissive_event(
+                event_name="Welcome_email",   # 👈 matches your SwiftMissive template event
+                email=user.email,
+                variables={
+                    "user.first_name": user.first_name,
+                    "verification_link": verification_link
+                }
+            )
+
+            messages.success(request, 'Registration successful! Please check your email to verify your account.')
+            return redirect('applications:login')
         else:
             messages.error(request, 'Registration failed. Please correct the errors below.')
     else:
         form = UserRegistrationForm()
+
     return render(request, 'applications/signup.html', {'form': form})
 
-
-    return redirect('applications:login')
 
 @require_http_methods(["GET", "POST"])
 def confirm_legacy(request, no: int):
@@ -267,32 +355,6 @@ def create_application(request):
 def documents_submitted(request):
     return render(request, "applications/documents_submitted.html")
 
-
-def send_documents_confirmation_email(application):
-    user = application.applicant.user
-    to_email = (user.email or "").strip()
-    if not to_email:
-        return
-
-    subject = "Documents received — MPG Scholarship Application"
-    message = (
-        f"Hello {user.get_full_name() or user.username},\n\n"
-        "We have successfully received your uploaded documents for your application.\n\n"
-        f"Application ID: {getattr(application, 'unique_id', application.pk)}\n"
-        f"Institution: {getattr(application.institution, 'name', '-')}\n"
-        f"Course: {getattr(application.course, 'name', '-')}\n\n"
-        "Our officers will review your documents and update your application status.\n\n"
-        "Thank you."
-    )
-
-    # send only after DB commit
-    transaction.on_commit(lambda: send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [to_email],
-        fail_silently=False,
-    ))
 
 
 # -- AI SCAN 

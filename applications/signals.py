@@ -6,6 +6,7 @@ from django.dispatch import receiver
 
 from .models import ApplicationReview
 from .tasks import send_application_status_email
+from .tasks import send_verification_email, send_status_update_email
 
 logger = logging.getLogger(__name__)
 
@@ -36,3 +37,5 @@ def notify_applicant_on_review(sender, instance, created, **kwargs):
 
     except Exception:
         logger.exception("Failed to enqueue application status email for review %s", getattr(instance, "pk", None))
+
+

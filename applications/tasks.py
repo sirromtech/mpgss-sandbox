@@ -1,56 +1,45 @@
 from celery import shared_task
-from .utils import trigger_swiftmassive_event
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.urls import reverse
+from .utils import trigger_swiftmassive_event
+from .models import ApplicationReview
 
 User = get_user_model()
 
-@shared_task(bind=True, max_retries=3)
-def send_application_status_email(self, review_id):
-    from .models import ApplicationReview
-    from .utils import trigger_swiftmassive_event
+def _send_event(self, email, event_name, payload):
     try:
-        review = ApplicationReview.objects.select_related("application__applicant__user").get(pk=review_id)
-        user = review.application.applicant.user
-        
         trigger_swiftmassive_event(
-            email=user.email,
-            event_name="application_status_update",
-            data_dict={
-                "first_name": user.first_name or user.username,
-                "current_status": review.status,
-                "login_url": f"{settings.SITE_URL}/dashboard/"
-            }
+            email=email,
+            event_name=event_name,
+            data_dict=payload
         )
     except Exception as exc:
         raise self.retry(exc=exc, countdown=60)
 
+@shared_task(bind=True, max_retries=3)
+def send_application_status_email(self, review_id):
+    review = ApplicationReview.objects.select_related("application__applicant__user").get(pk=review_id)
+    user = review.application.applicant.user
+    _send_event(self, user.email, "application_status_update", {
+        "first_name": user.first_name or user.username,
+        "current_status": review.status,
+        "login_url": f"{settings.SITE_URL}{reverse('dashboard')}"
+    })
 
 @shared_task(bind=True, max_retries=3)
 def send_welcome_email_task(self, user_id):
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    try:
-        user = User.objects.get(pk=user_id)
-        
-        # 1. Get the base domain from Render settings
-        # Ensure SITE_URL is "https://mpgss-ycle.onrender.com" in Render Env Vars
-        base = getattr(settings, "SITE_URL", "https://mpgss-ycle.onrender.com").rstrip("/")
-        
-        # 2. Get the path for 'login' from your urls.py
-        login_path = reverse("login") # This returns "/login/"
-        
-        # 3. Combine them into a single string to send to Swiftmassive
-        full_login_url = f"{base}{login_path}"
-        
-        trigger_swiftmassive_event(
-            email=user.email,
-            event_name="welcome_email",
-            data={
-                "first_name": user.first_name or user.username,
-                "login_url": full_login_url  # This is the string Swiftmassive will use in the href
-            }
-        )
-    except Exception as exc:
-        raise self.retry(exc=exc)
+    user = User.objects.get(pk=user_id)
+    full_login_url = f"{settings.SITE_URL.rstrip('/')}{reverse('login')}"
+    _send_event(self, user.email, "welcome_email", {
+        "first_name": user.first_name or user.username,
+        "login_url": full_login_url
+    })
+
+@shared_task(bind=True, max_retries=3)
+def send_verification_email(self, user_email, token):
+    _send_event(self, user_email, "verification_email", {"token": token})
+
+@shared_task(bind=True, max_retries=3)
+def send_status_update_email(self, user_email, status):
+    _send_event(self, user_email, "status_update", {"status": status})
