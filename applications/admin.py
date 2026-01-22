@@ -49,7 +49,7 @@ class ApplicantProfileAdmin(admin.ModelAdmin):
         ('Personal Information', {
             'fields': (
                 'first_name', 'surname', 'gender', 'date_of_birth',
-                'sim_card_number', 'nid_number', 'grade12_certificate_number',
+                'phone_number', 'nid_number', 'grade12_certificate_number',
                 'elementary_completed', 'primary_completed',
                 'secondary_school_name', 'year_completed_grade12',
                 'tesas_category', 'active_student_id'
