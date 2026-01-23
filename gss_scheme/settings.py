@@ -21,7 +21,7 @@ RENDER_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "mpgss-ycle.onrender.com",
+    "https://mpgss-sandbox.onrender.com",
     "mpgss.org",
     "www.mpgss.org",
 ]
