@@ -185,6 +185,81 @@ def review_application(request, pk):
         )
 
     reviews = application.reviews.select_related("reviewer").order_by("-created_at")
+# views_review.py
+
+def yn(val):
+    return "Yes" if val else "No"
+
+def safe(getter, fallback="—"):
+    v = getter()
+    return fallback if v in [None, "", []] else v
+
+# Build sections for read-only display (profile is the source of truth)
+detail_sections = [
+    ("Personal Information", [
+        ("First Name", safe(lambda: profile.first_name) or safe(lambda: student.first_name)),
+        ("Surname", safe(lambda: profile.surname) or safe(lambda: getattr(student, "last_name", ""))),
+        ("Gender", safe(lambda: profile.get_gender_display() if hasattr(profile, "get_gender_display") else profile.gender)),
+        ("Date of Birth", safe(lambda: profile.date_of_birth)),
+        ("Phone Number", safe(lambda: profile.phone_number)),
+        ("NID Number", safe(lambda: profile.nid_number)),
+        ("Grade 12 Cert No.", safe(lambda: profile.grade12_certificate_number)),
+        ("Elementary Completed", yn(profile.elementary_completed)),
+        ("Primary Completed", yn(profile.primary_completed)),
+        ("Secondary School", safe(lambda: profile.secondary_school_name)),
+        ("Year Completed Grade 12", safe(lambda: profile.year_completed_grade12)),
+        ("TESAS Category", safe(lambda: profile.tesas_category)),
+        ("Active Student ID", safe(lambda: profile.active_student_id)),
+    ]),
+    ("Residence & Contacts", [
+        ("Postal Address", safe(lambda: profile.postal_address)),
+        ("Current Residential Area", safe(lambda: profile.current_residential_area)),
+        ("Duration Living In", safe(lambda: profile.duration_living_in)),
+        ("Current District", safe(lambda: profile.current_district)),
+        ("Current LLG", safe(lambda: profile.current_llg)),
+    ]),
+    ("Origin", [
+        ("Origin Province", safe(lambda: profile.origin_province, safe(lambda: getattr(application, "origin_province", None)))),
+        ("Origin District", safe(lambda: profile.origin_district, safe(lambda: getattr(application, "origin_district", None)))),
+        ("Origin Ward", safe(lambda: profile.origin_ward, safe(lambda: getattr(application, "origin_ward", None)))),
+    ]),
+    ("Residency", [
+        ("Residency Province", safe(lambda: profile.residency_province)),
+        ("Residency District", safe(lambda: profile.residency_district)),
+        ("Residency Ward", safe(lambda: profile.residency_ward)),
+        ("Residency Years", safe(lambda: profile.residency_years)),
+    ]),
+    ("Father Information", [
+        ("Name", safe(lambda: profile.father_name)),
+        ("Occupation", safe(lambda: profile.father_occupation)),
+        ("Nationality", safe(lambda: profile.father_nationality)),
+        ("Province", safe(lambda: profile.father_province)),
+        ("District", safe(lambda: profile.father_district)),
+        ("LLG", safe(lambda: profile.father_llg)),
+        ("Village", safe(lambda: profile.father_village)),
+        ("Elementary Completed", yn(profile.father_elementary_completed)),
+        ("Primary Completed", yn(profile.father_primary_completed)),
+        ("High School Completed", yn(profile.father_highschool_completed)),
+    ]),
+    ("Mother Information", [
+        ("Name", safe(lambda: profile.mother_name)),
+        ("Occupation", safe(lambda: profile.mother_occupation)),
+        ("Nationality", safe(lambda: profile.mother_nationality)),
+        ("Province", safe(lambda: profile.mother_province)),
+        ("District", safe(lambda: profile.mother_district)),
+        ("LLG", safe(lambda: profile.mother_llg)),
+        ("Village", safe(lambda: profile.mother_village)),
+        ("Elementary Completed", yn(profile.mother_elementary_completed)),
+        ("Elementary Year", safe(lambda: profile.mother_elementary_year)),
+        ("Primary Completed", yn(profile.mother_primary_completed)),
+        ("Primary Year", safe(lambda: profile.mother_primary_year)),
+        ("High School Completed", yn(profile.mother_highschool_completed)),
+        ("High School Year", safe(lambda: profile.mother_highschool_year)),
+    ]),
+]
+
+# then in your render context add:
+# "detail_sections": detail_sections,
 
     return render(
         request,
@@ -199,5 +274,6 @@ def review_application(request, pk):
             "payment": payment,
             "form": form,
             "reviews": reviews,
+            "detail_sections": detail_sections,
         },
     )
