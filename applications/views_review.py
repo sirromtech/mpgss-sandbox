@@ -261,16 +261,16 @@ detail_sections = [
 # then in your render context add:
 # "detail_sections": detail_sections,
 
-        return render(request,template_name,{
-            "application": application,
-            "profile": profile,
-            "student": student,
-            "preview_photo": preview_photo,   # use this in templates if you want
-            "has_profile_photo": has_profile_photo,
-            "documents": documents,
-            "payment": payment,
-            "form": form,
-            "reviews": reviews,
-            "detail_sections": detail_sections,
-        },
-    )
+    return render(request,template_name,{
+        "application": application,
+        "profile": profile,
+        "student": student,
+        "preview_photo": preview_photo,   # use this in templates if you want
+        "has_profile_photo": has_profile_photo,
+        "documents": documents,
+        "payment": payment,
+        "form": form,
+        "reviews": reviews,
+        "detail_sections": detail_sections,
+    },
+)
