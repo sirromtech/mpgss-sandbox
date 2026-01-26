@@ -261,10 +261,7 @@ detail_sections = [
 # then in your render context add:
 # "detail_sections": detail_sections,
 
-    return render(
-        request,
-        template_name,
-        {
+        return render(request,template_name,{
             "application": application,
             "profile": profile,
             "student": student,
