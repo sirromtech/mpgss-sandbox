@@ -30,7 +30,8 @@ urlpatterns = [
     path("apply/", views.choose_application_type, name="apply"),
     path("apply/new/", views.create_application, name="create_application"),
     path("apply/success/", views.application_success, name="application_success"),
- 
+    path("submitted/", views.documents_submitted, name="documents_submitted"),
+
 
     # Student dashboards
     path("dashboard/", views.user_dashboard, name="user_dashboard"),

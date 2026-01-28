@@ -322,7 +322,9 @@ def create_application(request):
         "profile": profile,
     })
 
-
+@login_required
+def documents_submitted(request):
+    return render(request, "applications/documents_submitted.html")
 
 
 @login_required
