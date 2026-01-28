@@ -102,11 +102,4 @@ urlpatterns = [
     # ------------------------------------------------------------------
     path("news_list/", views.news_list, name="news_list"),
     path("news/<int:pk>/", views.news_detail, name="news_detail"),
-
-    # ------------------------------------------------------------------
-    # AI / OCR Scanning
-    # ------------------------------------------------------------------
-    path("scanning/<str:task_id>/", views.scanning, name="scanning"),
-    path("scan-progress/<str:task_id>/", views.scan_progress, name="scan_progress"),
-    path("scan-result/<str:task_id>/", views.scan_result, name="scan_result"),
 ]
