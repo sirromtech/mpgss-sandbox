@@ -91,7 +91,7 @@ class ApplicantProfileForm(forms.ModelForm):
 class ApplicationForm(forms.ModelForm):
     institution = forms.ModelChoiceField(queryset=None, required=True)
     course = forms.ModelChoiceField(queryset=None, required=False)
-    documents_pdf = models.FileField(upload_to="applications/documents/", blank=True, null=True)
+    documents_pdf = forms.ModelFileField(upload_to="applications/documents/", blank=True, null=True)
 
     class Meta:
         model = Application
