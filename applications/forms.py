@@ -254,42 +254,27 @@ class ContinuingApplicationForm(forms.ModelForm):
         model = Application
         fields = [
             "year_of_study",
-            "transcript",
-            "id_card",
+            "documents_pdf",
         ]
         widgets = {
-            "year_of_study": forms.Select(attrs={"class": "form-control"}),
-
-            "transcript": forms.ClearableFileInput(attrs={
-                "class": "form-control",
-                "accept": ".pdf",
-            }),
-
-            "id_card": forms.ClearableFileInput(attrs={
-                "class": "form-control",
-                "accept": ".pdf,.jpg,.jpeg,.png",
-            }),
+            "documents_pdf": forms.ClearableFileInput(
+                attrs={
+                    "class": "form-control",
+                    "accept": ".pdf",
+                }
+            ),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # continuing students must upload transcript + id card
-        if "transcript" in self.fields:
-            self.fields["transcript"].required = True
-        if "id_card" in self.fields:
-            self.fields["id_card"].required = True
-
-    def clean_transcript(self):
-        f = self.cleaned_data.get("transcript")
-        if f:
-            return validate_upload(f, "Transcript")
+    def clean_documents_pdf(self):
+        f = self.cleaned_data.get("documents_pdf")
+        if not f:
+            raise forms.ValidationError("You must upload a PDF containing all required documents.")
+        if not f.name.lower().endswith(".pdf"):
+            raise forms.ValidationError("Only PDF files are allowed.")
+        if f.size > 10 * 1024 * 1024:
+            raise forms.ValidationError("File size must be under 10MB.")
         return f
 
-    def clean_id_card(self):
-        f = self.cleaned_data.get("id_card")
-        if f:
-            return validate_upload(f, "ID Card")
-        return f
 
 class ContinuingProfileForm(forms.ModelForm):
     class Meta:
