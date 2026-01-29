@@ -91,7 +91,7 @@ class ApplicantProfileForm(forms.ModelForm):
 class ApplicationForm(forms.ModelForm):
     institution = forms.ModelChoiceField(queryset=None, required=True)
     course = forms.ModelChoiceField(queryset=None, required=False)
-    
+
 
     class Meta:
         model = Application
@@ -343,7 +343,3 @@ class LegacyLookupForm(forms.Form):
     year_of_study = forms.IntegerField(required=False)
 
 
-class ContinuingTranscriptOnlyForm(forms.ModelForm):
-    class Meta:
-        model = Application
-        fields = ["transcript"]   # ONLY transcript
