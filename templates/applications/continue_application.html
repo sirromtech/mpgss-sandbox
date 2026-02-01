@@ -110,17 +110,14 @@
 
               <h5 class="mt-4">Required Documents</h5>
 
-              <div class="col-md-6">
-                {{ app_form.transcript|as_crispy_field }}
-                <div class="form-text">Upload your latest transcript (PDF/JPG/PNG). Max 10MB.</div>
-                <div id="transcriptPreview" class="mt-2"></div>
-              </div>
+          <div class="col-md-12">
+         {{ app_form.documents_pdf|as_crispy_field }}
+  <div class="form-text">
+    Upload all required documents as <strong>one PDF</strong>. Max 10MB.
+  </div>
+  <div id="documentsPdfPreview" class="mt-2"></div>
+</div>
 
-              <div class="col-md-6">
-                {{ app_form.id_card|as_crispy_field }}
-                <div class="form-text">Upload a clear student ID (PDF/JPG/PNG). Max 10MB.</div>
-                <div id="idCardPreview" class="mt-2"></div>
-              </div>
 
             </div>
 
