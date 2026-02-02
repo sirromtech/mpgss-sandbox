@@ -221,8 +221,6 @@ class Application(models.Model):
     character_reference_2 = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
     statdec = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
 
-    # If you had face_photo previously:
-    face_photo = models.ImageField(upload_to="applications/photos/", blank=True, null=True)
 
     # Parent/student employment info (already present)
     parent_employed = models.BooleanField(default=False)
