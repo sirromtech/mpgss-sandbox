@@ -62,8 +62,8 @@ class News(models.Model):
 class LegacyStudent(models.Model):
     first_name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
-    institution = models.CharField(max_length=200, blank=True)
-    course = models.CharField(max_length=200, blank=True)
+    institution = models.CharField(max_length=200)
+    course = models.CharField(max_length=200)
     # models.py (Application)
 
     YEAR_CHOICES = [
@@ -74,9 +74,9 @@ class LegacyStudent(models.Model):
     (5, "Year 5"),
     ]
 
-    year_of_study = models.IntegerField(choices=YEAR_CHOICES, null=True, blank=True)
+    year_of_study = models.IntegerField(choices=YEAR_CHOICES)
 
-    tuition_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    tuition_fee = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"{self.first_name} {self.surname}"
@@ -170,13 +170,13 @@ class Application(models.Model):
 
     applicant = models.ForeignKey('ApplicantProfile', on_delete=models.CASCADE, related_name='applications')
     institution = models.ForeignKey(Institution, on_delete=models.PROTECT, related_name="applications")
-    course = models.ForeignKey(Course, on_delete=models.SET_NULL)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
 
     original_application = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         related_name='continuations'
     )
 
