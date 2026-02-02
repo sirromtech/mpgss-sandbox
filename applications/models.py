@@ -83,67 +83,67 @@ class LegacyStudent(models.Model):
 
 class ApplicantProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    postal_address = models.TextField(blank=True)
-    photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
+    postal_address = models.TextField()
+    photo = models.ImageField(upload_to='profile_photos/')
   
     # --- Personal Information ---
-    first_name = models.CharField(max_length=100, blank=True)
-    surname = models.CharField(max_length=100, blank=True)
-    gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
-    phone_number = models.CharField(max_length=20, blank=True)
-    nid_number = models.CharField(max_length=50, blank=True)
-    grade12_certificate_number = models.CharField(max_length=50, blank=True)
-    elementary_completed = models.BooleanField(default=False)
-    primary_completed = models.BooleanField(default=False)
-    secondary_school_name = models.CharField(max_length=150, blank=True)
-    year_completed_grade12 = models.PositiveIntegerField(null=True, blank=True)
+    first_name = models.CharField(max_length=100)
+    surname = models.CharField(max_length=100)
+    gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')])
+    date_of_birth = models.DateField()
+    phone_number = models.CharField(max_length=20)
+    nid_number = models.CharField(max_length=50)
+    grade12_certificate_number = models.CharField(max_length=50)
+    elementary_completed = models.BooleanField()
+    primary_completed = models.BooleanField()
+    secondary_school_name = models.CharField(max_length=150)
+    year_completed_grade12 = models.PositiveIntegerField()
     tesas_category = models.CharField(
         max_length=10,
-        choices=[('HECAS', 'HECAS'), ('AES', 'AES'), ('SS', 'SS')],
-        blank=True
+        choices=[('HECAS', 'HECAS'), ('AES', 'AES'), ('SS', 'SS')]
+        
     )
-    active_student_id = models.CharField(max_length=50, blank=True)
+    active_student_id = models.CharField(max_length=50)
 
     # --- Father Information ---
-    father_name = models.CharField(max_length=150, blank=True)
-    father_occupation = models.CharField(max_length=100, blank=True)
-    father_nationality = models.CharField(max_length=100, blank=True)
-    father_province = models.CharField(max_length=100, blank=True)
-    father_district = models.CharField(max_length=100, blank=True)
-    father_llg = models.CharField(max_length=100, blank=True)
-    father_village = models.CharField(max_length=100, blank=True)
-    father_elementary_completed = models.BooleanField(default=False)
-    father_primary_completed = models.BooleanField(default=False)
-    father_highschool_completed = models.BooleanField(default=False)
+    father_name = models.CharField(max_length=150)
+    father_occupation = models.CharField(max_length=100)
+    father_nationality = models.CharField(max_length=100)
+    father_province = models.CharField(max_length=100)
+    father_district = models.CharField(max_length=100)
+    father_llg = models.CharField(max_length=100)
+    father_village = models.CharField(max_length=100)
+    father_elementary_completed = models.BooleanField()
+    father_primary_completed = models.BooleanField()
+    father_highschool_completed = models.BooleanField()
 
     # --- Mother Information ---
-    mother_name = models.CharField(max_length=150, blank=True)
-    mother_occupation = models.CharField(max_length=100, blank=True)
-    mother_nationality = models.CharField(max_length=100, blank=True)
-    mother_province = models.CharField(max_length=100, blank=True)
-    mother_district = models.CharField(max_length=100, blank=True)
-    mother_llg = models.CharField(max_length=100, blank=True)
-    mother_village = models.CharField(max_length=100, blank=True)
-    mother_elementary_completed = models.BooleanField(default=False)
-    mother_elementary_year = models.PositiveIntegerField(null=True, blank=True)
-    mother_primary_completed = models.BooleanField(default=False)
-    mother_primary_year = models.PositiveIntegerField(null=True, blank=True)
-    mother_highschool_completed = models.BooleanField(default=False)
-    mother_highschool_year = models.PositiveIntegerField(null=True, blank=True)
+    mother_name = models.CharField(max_length=150)
+    mother_occupation = models.CharField(max_length=100)
+    mother_nationality = models.CharField(max_length=100)
+    mother_province = models.CharField(max_length=100)
+    mother_district = models.CharField(max_length=100)
+    mother_llg = models.CharField(max_length=100)
+    mother_village = models.CharField(max_length=100)
+    mother_elementary_completed = models.BooleanField()
+    mother_elementary_year = models.PositiveIntegerField()
+    mother_primary_completed = models.BooleanField()
+    mother_primary_year = models.PositiveIntegerField()
+    mother_highschool_completed = models.BooleanField()
+    mother_highschool_year = models.PositiveIntegerField()
 
     # --- Additional Information ---
-    current_residential_area = models.CharField(max_length=255, blank=True)
-    duration_living_in = models.CharField(max_length=50, blank=True)
-    current_district = models.CharField(max_length=100, blank=True)
-    current_llg = models.CharField(max_length=100, blank=True)
-    origin_province = models.CharField(max_length=100, blank=True)
-    origin_district = models.CharField(max_length=100, blank=True)
-    origin_ward = models.CharField(max_length=100, blank=True)
-    residency_province = models.CharField(max_length=100, blank=True)
-    residency_district = models.CharField(max_length=100, blank=True)
-    residency_ward = models.CharField(max_length=100, blank=True)
-    residency_years = models.PositiveIntegerField(null=True, blank=True)
+    current_residential_area = models.CharField(max_length=255)
+    duration_living_in = models.CharField(max_length=50)
+    current_district = models.CharField(max_length=100)
+    current_llg = models.CharField(max_length=100)
+    origin_province = models.CharField(max_length=100)
+    origin_district = models.CharField(max_length=100)
+    origin_ward = models.CharField(max_length=100)
+    residency_province = models.CharField(max_length=100)
+    residency_district = models.CharField(max_length=100)
+    residency_ward = models.CharField(max_length=100)
+    residency_years = models.PositiveIntegerField()
 
     def __str__(self):
         return self.user.get_full_name() or self.user.username
@@ -170,13 +170,13 @@ class Application(models.Model):
 
     applicant = models.ForeignKey('ApplicantProfile', on_delete=models.CASCADE, related_name='applications')
     institution = models.ForeignKey(Institution, on_delete=models.PROTECT, related_name="applications")
-    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL)
 
     original_application = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         related_name='continuations'
     )
 
@@ -214,25 +214,25 @@ class Application(models.Model):
 
     # Parent/student employment info (already present)
     parent_employed = models.BooleanField(default=False)
-    parent_company = models.CharField(max_length=255, blank=True)
-    parent_job_title = models.CharField(max_length=255, blank=True)
-    parent_salary_range = models.CharField(max_length=100, blank=True)
-    parent_income_source = models.CharField(max_length=255, blank=True)
-    parent_annual_income = models.CharField(max_length=100, blank=True)
+    parent_company = models.CharField(max_length=255)
+    parent_job_title = models.CharField(max_length=255)
+    parent_salary_range = models.CharField(max_length=100)
+    parent_income_source = models.CharField(max_length=255)
+    parent_annual_income = models.CharField(max_length=100)
 
     student_employed = models.BooleanField(default=False)
-    student_company = models.CharField(max_length=255, blank=True)
-    student_job_title = models.CharField(max_length=255, blank=True)
-    student_salary_range = models.CharField(max_length=100, blank=True)
+    student_company = models.CharField(max_length=255)
+    student_job_title = models.CharField(max_length=255)
+    student_salary_range = models.CharField(max_length=100)
 
     # Origin/residency info
-    origin_province = models.CharField(max_length=100, blank=True)
-    origin_district = models.CharField(max_length=100, blank=True)
-    origin_ward = models.CharField(max_length=100, blank=True)
-    residency_province = models.CharField(max_length=100, blank=True)
-    residency_district = models.CharField(max_length=100, blank=True)
-    residency_ward = models.CharField(max_length=100, blank=True)
-    residency_years = models.CharField(max_length=3, blank=True)
+    origin_province = models.CharField(max_length=100)
+    origin_district = models.CharField(max_length=100)
+    origin_ward = models.CharField(max_length=100)
+    residency_province = models.CharField(max_length=100)
+    residency_district = models.CharField(max_length=100)
+    residency_ward = models.CharField(max_length=100)
+    residency_years = models.CharField(max_length=3)
 
     submission_date = models.DateTimeField(auto_now_add=True)
     last_cycle_started_at = models.DateTimeField(null=True, blank=True)
