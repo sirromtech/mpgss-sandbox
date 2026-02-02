@@ -211,6 +211,18 @@ class Application(models.Model):
         null=True,
         help_text="Upload all required documents as ONE PDF"
     )
+        # ✅ Legacy fields (bring back to READ old applications)
+    grade_12_certificate = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
+    transcript = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
+    acceptance_letter = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
+    school_fee_structure = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
+    id_card = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
+    character_reference_1 = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
+    character_reference_2 = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
+    statdec = models.FileField(upload_to="applications/legacy/", blank=True, null=True)
+
+    # If you had face_photo previously:
+    face_photo = models.ImageField(upload_to="applications/photos/", blank=True, null=True)
 
     # Parent/student employment info (already present)
     parent_employed = models.BooleanField(default=False)
